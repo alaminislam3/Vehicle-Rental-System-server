@@ -33,17 +33,21 @@ const addVehicle = async (req: Request, res: Response) => {
 
 const getVehicles = async (req: Request, res: Response) => {
   try {
-    const result = await vehicleService.getVehicles();
-    if (result.rows.length === 0) {
+    const role: string = req.user?.role
+    const result = await vehicleService.getVehicles(role);
+    
+
+    if (result.rows.length === 0) { 
       res.status(200).json({
         success: true,
         message: "No vehicles found",
         data: [],
       });
     } else {
+      // "vehicles retrieved successfully",
       res.status(200).json({
         success: true,
-        message: "vehicles retrieved successfully",
+        message: role == "admin" ? "vehicles retrieved successfully" : "Your bookings retrieved successfully",
         data: result.rows,
       });
     }
@@ -100,7 +104,7 @@ const updateVehicle = async (req: Request, res: Response) => {
       res.status(200).json({
         success: true,
         message: "Vehicle updated successfully",
-        data: result.rows,
+        data: result.rows[0],
       });
     }
   } catch (err: any) {
@@ -140,5 +144,5 @@ export const vehicleController = {
   getVehicles,
   singleVehicle,
   updateVehicle,
-  deleteVehicle,
+  deleteVehicle
 };

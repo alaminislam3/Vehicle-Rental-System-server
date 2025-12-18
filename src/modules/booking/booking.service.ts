@@ -15,13 +15,13 @@ const createBooking = async (payload: Record<string, unknown>) => {
      WHERE id = $1`,
     [vehicle_id]
   );
-
+  
   if (vehicleResult.rows.length === 0) {
     throw new Error("Vehicle not found");
   }
 
   const vehicle = vehicleResult.rows[0];
-
+  //  console.log(vehicle)
   /* 2. calculate days */
   const startDate = new Date(rent_start_date as string);
   const endDate = new Date(rent_end_date as string);
@@ -53,7 +53,7 @@ const createBooking = async (payload: Record<string, unknown>) => {
   );
 
   const booking = bookingResult.rows[0];
-
+  // console.log(booking)
   /* 5. final formatted response */
   return {
     ...booking,
@@ -66,6 +66,61 @@ const createBooking = async (payload: Record<string, unknown>) => {
   };
 };
 
+const getBookings = async (role: string, email: string) => {
+  // ADMIN: all bookings
+  if (role === "admin") {
+    const result = await pool.query(`
+      SELECT
+        b.id,
+        b.customer_id,
+        b.vehicle_id,
+        b.rent_start_date,
+        b.rent_end_date,
+        b.total_price,
+        b.status,
+        json_build_object(
+          'name', u.name,
+          'email', u.email
+        ) AS customer,
+        json_build_object(
+          'vehicle_name', v.vehicle_name,
+          'registration_number', v.registration_number
+        ) AS vehicle
+      FROM booking b
+      JOIN users u ON b.customer_id = u.id
+      JOIN vehicle v ON b.vehicle_id = v.id
+      ORDER BY b.id DESC
+    `);
+
+    return result.rows;
+  }
+
+  // CUSTOMER: own bookings
+  const result = await pool.query(`
+    SELECT
+      b.id,
+      b.vehicle_id,
+      b.rent_start_date,
+      b.rent_end_date,
+      b.total_price,
+      b.status,
+      json_build_object(
+        'vehicle_name', v.vehicle_name,
+        'registration_number', v.registration_number,
+        'type', v.type
+      ) AS vehicle
+    FROM booking b
+    JOIN users u ON b.customer_id = u.id
+    JOIN vehicle v ON b.vehicle_id = v.id
+    WHERE u.email = $1
+    ORDER BY b.id DESC
+  `, [email]);
+
+  return result.rows;
+};
+
+
 export const BookingService = {
-  createBooking
+  createBooking,
+  getBookings
 };

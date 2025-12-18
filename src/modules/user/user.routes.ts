@@ -6,7 +6,7 @@ const routes = express()
 
 routes.post("/auth/singup",userController.createUser)
 
-routes.get("/users", auth("admin") ,userController.getUser)
+routes.get("/users", auth("admin"),userController.getUser) 
 
 routes.get("/:id",userController.getSingleUser)
 

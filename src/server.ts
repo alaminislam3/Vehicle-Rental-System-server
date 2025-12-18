@@ -18,17 +18,17 @@ app.get("/", logger, (req: Request, res: Response)=> {
   res.send("Next level web dev")
 })
 
-// USER CRUD
-app.use("/api/v1", UserRoutes);
+// Vehicle
+app.use("/api/v1/vehicles", vehicleRoute);
 
-// TODO
-app.use("/api/v1", vehicleRoute);
+// Booking
+app.use("/api/v1/bookings", BookingRoute)
 
 // AUTH 
 app.use("/api/v1/auth", authRoutes)
 
-// Booking
-app.use("/api/v1", BookingRoute)
+// USER CRUD
+app.use("/api/v1", UserRoutes);
 
 // NOT FOUND ROUTE
 app.use((req, res) => {

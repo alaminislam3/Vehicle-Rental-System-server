@@ -6,14 +6,23 @@ import config from "../config"
 const auth = (...roles:string[]) => {
     return async (req: Request, res: Response, next: NextFunction) => {
         try{
-        const token = req.headers.authorization
+        const token = req.headers?.authorization
+        // console.log(token)
+        
         if(!token){
-           res.status(500).json({
+           return res.status(401).json({
+                success: false,
+                message : "you are not allowed"
+            })
+        }
+        const newToken = token.split(" ")[1]
+        if(!newToken){
+         return res.status(500).json({
             message : "you are not allowed"
            }) 
         }
-        const decoded = jwt.verify(token,config.jwtsecret as string) as JwtPayload
-        console.log({decoded})
+        const decoded = jwt.verify(newToken ,config.jwtsecret as string) as JwtPayload
+        // console.log({decoded})
         req.user = decoded  /* token verify korar pore seta user er moddhe set kore */
 
         if (roles.length && !roles.includes(decoded.role as string)){

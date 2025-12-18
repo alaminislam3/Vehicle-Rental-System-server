@@ -7,9 +7,11 @@ const addVehicle = async (vehicle_name: string, type: string,registration_number
     );
     return result
 }
-
-const getVehicles = async () => {
-const result = await pool.query(`SELECT * FROM vehicle`);
+                         /* working here  */
+                         
+const getVehicles = async (role: string) => {
+const result = role == "admin" ? await pool.query(`SELECT * FROM vehicle`) : await pool.query(`
+    SELECT id, vehicle_id, rent_start_date,rent_end_date,total_price,status WHERE id=$1 FROM booking`)
 return result
 }
 
