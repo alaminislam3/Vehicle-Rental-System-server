@@ -33,8 +33,8 @@ const addVehicle = async (req: Request, res: Response) => {
 
 const getVehicles = async (req: Request, res: Response) => {
   try {
-    const role: string = req.user?.role
-    const result = await vehicleService.getVehicles(role);
+    
+    const result = await vehicleService.getVehicles();
     
 
     if (result.rows.length === 0) { 
@@ -47,7 +47,7 @@ const getVehicles = async (req: Request, res: Response) => {
       // "vehicles retrieved successfully",
       res.status(200).json({
         success: true,
-        message: role == "admin" ? "vehicles retrieved successfully" : "Your bookings retrieved successfully",
+        message:  "vehicles retrieved successfully" ,
         data: result.rows,
       });
     }

@@ -119,8 +119,50 @@ const getBookings = async (role: string, email: string) => {
   return result.rows;
 };
 
+const updateBooking = async (id: string, status: string) => {
+
+  // 🔹 Step 1: booking update
+  const bookingResult = await pool.query(
+    `UPDATE booking
+     SET status = $1
+     WHERE id = $2
+     RETURNING *`,
+    [status, id]
+  );
+
+  if (bookingResult.rowCount === 0) {
+    return { rowCount: 0 };
+  }
+
+  const booking = bookingResult.rows[0];
+
+  
+  let vehicle = null;
+
+  if (status === "returned") {
+    const vehicleResult = await pool.query(
+      `UPDATE vehicle
+       SET availability_status = 'available'
+       WHERE id = $1
+       RETURNING availability_status`,
+      [booking.vehicle_id]
+    );
+
+    vehicle = vehicleResult.rows[0];
+  }
+
+  return {
+    rowCount: 1,
+    booking,
+    vehicle,
+  };
+};
+
+
+
 
 export const BookingService = {
   createBooking,
-  getBookings
+  getBookings,
+  updateBooking
 };

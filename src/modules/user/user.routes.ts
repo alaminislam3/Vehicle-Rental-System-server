@@ -10,8 +10,8 @@ routes.get("/users", auth("admin"),userController.getUser)
 
 routes.get("/:id",userController.getSingleUser)
 
-routes.put("/users/:id",userController.updateUser)
+routes.put("/users/:id",auth("admin","customer"),userController.updateUser) 
 
-routes.delete("/users/:id", userController.deleteUser)
+routes.delete("/users/:id",auth("admin"), userController.deleteUser)
 
 export const UserRoutes = routes
