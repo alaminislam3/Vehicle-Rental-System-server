@@ -18,7 +18,7 @@ const initDB = async () => {
           role VARCHAR(50) NOT NULL
          )
          `);
-  console.log("database connected");
+  // console.log("database connected");
 
   await pool.query(`
      CREATE TABLE IF NOT EXISTS vehicle(
