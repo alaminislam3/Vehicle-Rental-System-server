@@ -4,7 +4,7 @@ import auth from "../../middleware/auth";
 
 const routes = express()
 
-routes.post("/auth/singup",userController.createUser)
+routes.post("/auth/signup",userController.createUser)
 
 routes.get("/users", auth("admin"),userController.getUser) 
 
